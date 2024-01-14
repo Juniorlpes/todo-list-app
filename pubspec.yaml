@@ -9,22 +9,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  #flutter_modular: ^6.3.0
-  dio: ^5.4.0
   hive: ^2.2.0
   get_it: ^7.6.4
   go_router: ^13.0.0
-  #dartz: ^0.10.0
   hive_flutter: ^1.1.0
   path_provider: ^2.1.0
-  ansicolor: ^2.0.0
   xid: ^1.0.12
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
-  #modular_test: ^3.0.0
   build_runner: ^2.4.0
   hive_generator: ^2.0.0
   mocktail: ^0.3.0
