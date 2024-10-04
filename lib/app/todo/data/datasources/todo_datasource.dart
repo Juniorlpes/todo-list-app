@@ -1,6 +1,5 @@
 import 'package:todo_list/app/todo/data/models/todo_model.dart';
 import 'package:todo_list/app/todo/domain/entities/todo_item.dart';
-import 'package:todo_list/core/cache/cache_controller.dart';
 
 abstract class TodoLocalDatasource {
   Future<List<TodoItemModel>> getAllTodos();
@@ -10,34 +9,25 @@ abstract class TodoLocalDatasource {
 }
 
 class TodoLocalDatasourceImpl implements TodoLocalDatasource {
-  final CacheController<TodoItemModel> _todoCacheController;
-
-  TodoLocalDatasourceImpl(this._todoCacheController);
+  TodoLocalDatasourceImpl();
 
   @override
   Future<List<TodoItemModel>> getAllTodos() async {
-    return (await _todoCacheController.values)?.toList() ?? [];
+    throw UnimplementedError();
   }
 
   @override
   Future<TodoItemModel> createOrUpdateTodo(TodoItem item) async {
-    final todo = TodoItemModel.fromItem(item);
-
-    await _todoCacheController.writeByKey(item.id, todo);
-    return todo;
+    throw UnimplementedError();
   }
 
   @override
   Future<void> deleteTodo(String id) async {
-    await _todoCacheController.deleteByKey(id);
+    throw UnimplementedError();
   }
 
   @override
   Future<void> updateTodosListOrder(List<TodoItem> itens) async {
-    await _todoCacheController.writeManyByKey(
-      {
-        for (var item in itens) item.id: TodoItemModel.fromItem(item),
-      },
-    );
+    throw UnimplementedError();
   }
 }
