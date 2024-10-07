@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
+import 'package:todo_list/app/auth/session_controller.dart';
 import 'package:todo_list/app/todo/presenter/stores/todos_list_store.dart';
 import 'package:todo_list/app/todo/presenter/widgets/todo_dialog.dart';
 
 class TodoPage extends StatelessWidget {
+  final sessionController = GetIt.I.get<SessionController>();
   final todosStore = GetIt.I.get<TodosListStore>();
 
   TodoPage({super.key});
@@ -12,7 +15,17 @@ class TodoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text('Todo List'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              sessionController.logOut().then((_) => context.go('/auth'));
+            },
+            icon: const Icon(Icons.exit_to_app),
+          ),
+        ],
+      ),
       body: ValueListenableBuilder<TodoListState>(
         valueListenable: todosStore,
         builder: (_, value, __) {

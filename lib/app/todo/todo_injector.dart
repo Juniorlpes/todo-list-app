@@ -12,20 +12,20 @@ import 'package:todo_list/core/firebase/firestore_collections/todo_sub_collectio
 
 import 'presenter/stores/todos_list_store.dart';
 
-final getIt = GetIt.instance;
+final _getIt = GetIt.instance;
 
 void registerTodoModuleDependencies() {
-  getIt.registerLazySingleton<TodoRepository>(
+  _getIt.registerLazySingleton<TodoRepository>(
     () => TodoRepositoryImpl(
       TodoDatasourceImpl(
         TodoSubCollection(
-          getIt.get<SessionController>().currentUser.id,
+          _getIt.get<SessionController>().currentUser.id,
         ),
       ),
     ),
   );
 
-  getIt.registerLazySingleton<TodosListStore>(
+  _getIt.registerLazySingleton<TodosListStore>(
     () => TodosListStore(
       CreateTodo(GetIt.I.get<TodoRepository>()),
       UpdateTodo(GetIt.I.get<TodoRepository>()),
@@ -37,6 +37,6 @@ void registerTodoModuleDependencies() {
 }
 
 void unregisterTodoModuleDependencies() {
-  getIt.unregister<TodoRepository>();
-  getIt.unregister<TodosListStore>();
+  _getIt.unregister<TodoRepository>();
+  _getIt.unregister<TodosListStore>();
 }

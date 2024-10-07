@@ -73,5 +73,6 @@ class AuthDatasourceImpl implements AuthDatasource {
   @override
   Future<void> logOut() async {
     await _firebaseAuth.signOut();
+    await _googleSignIn.signOut();
   }
 }
