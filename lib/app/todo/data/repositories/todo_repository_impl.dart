@@ -8,7 +8,7 @@ import 'package:todo_list/core/utils/typedefs.dart';
 import '../../domain/repositories/todo_repository.dart';
 
 class TodoRepositoryImpl implements TodoRepository {
-  final TodoLocalDatasource _localDatasource;
+  final TodoDatasource _localDatasource;
 
   TodoRepositoryImpl(this._localDatasource);
 

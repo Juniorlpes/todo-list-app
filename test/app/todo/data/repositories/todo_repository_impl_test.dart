@@ -7,7 +7,7 @@ import 'package:todo_list/app/todo/data/repositories/todo_repository_impl.dart';
 import 'package:todo_list/app/todo/domain/entities/todo_item.dart';
 import 'package:todo_list/core/general_app_failure.dart';
 
-class MockLocalDatasource extends Mock implements TodoLocalDatasource {}
+class MockLocalDatasource extends Mock implements TodoDatasource {}
 
 void main() {
   final localDatasource = MockLocalDatasource();
