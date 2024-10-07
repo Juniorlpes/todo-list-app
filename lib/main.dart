@@ -5,6 +5,12 @@ import 'package:todo_list/app/app_widget.dart';
 
 import 'firebase_options.dart';
 
+//TODO: Firebase branch
+//1 - Entidades novas
+//2 - Auth module
+//3 - todos os testes unitários
+//4 - Rodar e testar
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

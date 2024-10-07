@@ -24,7 +24,7 @@ class TodoItemModel extends TodoItem {
     };
   }
 
-  factory TodoItemModel.fromFireData(String docId, Map<String, dynamic> map) {
+  factory TodoItemModel.fromFireDoc(String docId, Map<String, dynamic> map) {
     return TodoItemModel(
       id: docId,
       todo: map['todo'] as String,

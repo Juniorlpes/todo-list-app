@@ -13,21 +13,25 @@ class TodoLocalDatasourceImpl implements TodoLocalDatasource {
 
   @override
   Future<List<TodoItemModel>> getAllTodos() async {
+    // TODO: implement
     throw UnimplementedError();
   }
 
   @override
   Future<TodoItemModel> createOrUpdateTodo(TodoItem item) async {
+    // TODO: implement
     throw UnimplementedError();
   }
 
   @override
   Future<void> deleteTodo(String id) async {
+    // TODO: implement
     throw UnimplementedError();
   }
 
   @override
   Future<void> updateTodosListOrder(List<TodoItem> itens) async {
+    // TODO: implement
     throw UnimplementedError();
   }
 }

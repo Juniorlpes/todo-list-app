@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:todo_list/app/auth/auth_injector.dart';
 
 import 'app_routes.dart';
 
-class AppWidget extends StatelessWidget {
+class AppWidget extends StatefulWidget {
   const AppWidget({Key? key}) : super(key: key);
+
+  @override
+  State<AppWidget> createState() => _AppWidgetState();
+}
+
+class _AppWidgetState extends State<AppWidget> {
+  @override
+  void initState() {
+    super.initState();
+
+    registerExportedAuthModuleDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +34,12 @@ class AppWidget extends StatelessWidget {
         useMaterial3: true,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    unregisterExportedAuthModuleDependencies();
+    super.dispose();
   }
 }
 

@@ -31,4 +31,5 @@ void registerTodoModuleDependencies() {
 
 void unregisterTodoModuleDependencies() {
   getIt.unregister<TodoRepository>();
+  getIt.unregister<TodosListStore>();
 }
