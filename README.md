@@ -7,7 +7,7 @@ Note that even if you change the branch (which has different integrations), the 
 ## Getting Started
 
 This Todo List has four branchs/version: <br />
-1 - Local data storage (Offline mode) <b>[Current branch]</b> <br />
+1 - Local data storage <mark><b>[Current branch]</b></mark> <br />
 2 - With Auth option and Firestore sdk to store and access data <br />
 &emsp;* You need to set up your own Firebase project to run this branch. <br />
 3 - Data access from a API Rest :hourglass: <br />
