@@ -4,7 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:todo_list/app/auth/data/models/user_model.dart';
 import 'package:todo_list/app/auth/domain/entities/user.dart';
 import 'package:todo_list/app/auth/domain/entities/user_not_authenticated_error.dart';
-import 'package:todo_list/core/firebase/firestore_collections/users_collection.dart';
+import 'package:todo_list/core/firebase/firestore_collection_service.dart';
 import 'package:todo_list/core/general_app_failure.dart';
 
 abstract class AuthDatasource {
@@ -16,7 +16,7 @@ abstract class AuthDatasource {
 class AuthDatasourceImpl implements AuthDatasource {
   final fire_auth.FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
-  final UsersCollection _usersCollection;
+  final DataCollectionService<UserModel> _usersCollection;
 
   AuthDatasourceImpl(
     this._firebaseAuth,

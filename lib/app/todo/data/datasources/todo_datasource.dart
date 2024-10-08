@@ -1,6 +1,6 @@
 import 'package:todo_list/app/todo/data/models/todo_model.dart';
 import 'package:todo_list/app/todo/domain/entities/todo_item.dart';
-import 'package:todo_list/core/firebase/firestore_collections/todo_sub_collection.dart';
+import 'package:todo_list/core/firebase/firestore_collection_service.dart';
 
 abstract class TodoDatasource {
   Future<List<TodoItemModel>> getAllTodos();
@@ -10,7 +10,7 @@ abstract class TodoDatasource {
 }
 
 class TodoDatasourceImpl implements TodoDatasource {
-  final TodoSubCollection _todoCollection;
+  final DataCollectionService<TodoItemModel> _todoCollection;
 
   TodoDatasourceImpl(this._todoCollection);
 

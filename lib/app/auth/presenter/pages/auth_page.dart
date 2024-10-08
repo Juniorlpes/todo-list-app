@@ -50,15 +50,32 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO: Improve this page
     return Scaffold(
       appBar: AppBar(
         title: const Text('LogIn'),
       ),
       body: Center(
         child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.white,
+          ),
           onPressed: controller.logIn,
-          child: const Text('Google'),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Tooltip(
+                message: 'from Flaticon.com',
+                child: Image.asset(
+                  'assets/google-icon.png',
+                  height: 20,
+                ),
+              ),
+              const SizedBox(width: 6),
+              const Text(
+                'Google',
+              ),
+            ],
+          ),
         ),
       ),
     );
