@@ -1,10 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart' as fire_auth;
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:todo_list/app/auth/data/models/user_model.dart';
 import 'package:todo_list/app/auth/domain/entities/user.dart';
 import 'package:todo_list/app/auth/domain/entities/user_not_authenticated_error.dart';
-import 'package:todo_list/core/firebase/firestore_collection_service.dart';
 import 'package:todo_list/core/general_app_failure.dart';
 
 abstract class AuthDatasource {
@@ -16,12 +14,10 @@ abstract class AuthDatasource {
 class AuthDatasourceImpl implements AuthDatasource {
   final fire_auth.FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
-  final DataCollectionService<UserModel> _usersCollection;
 
   AuthDatasourceImpl(
     this._firebaseAuth,
     this._googleSignIn,
-    this._usersCollection,
   );
 
   @override
@@ -32,17 +28,8 @@ class AuthDatasourceImpl implements AuthDatasource {
       throw UserNotAuthenticated();
     }
 
-    final user = await _usersCollection.getById(fireUser.uid);
-
-    if (user != null) return user;
-
-    await _usersCollection.create(UserModel(
-      id: fireUser.uid,
-      email: fireUser.email!,
-      name: fireUser.displayName ?? '',
-    ));
-
-    return (await _usersCollection.getById(fireUser.uid))!;
+    // TODO: implement
+    throw UnimplementedError();
   }
 
   @override

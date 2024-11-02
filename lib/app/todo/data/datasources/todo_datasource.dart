@@ -1,6 +1,5 @@
 import 'package:todo_list/app/todo/data/models/todo_model.dart';
 import 'package:todo_list/app/todo/domain/entities/todo_item.dart';
-import 'package:todo_list/core/firebase/firestore_collection_service.dart';
 
 abstract class TodoDatasource {
   Future<List<TodoItemModel>> getAllTodos();
@@ -10,32 +9,29 @@ abstract class TodoDatasource {
 }
 
 class TodoDatasourceImpl implements TodoDatasource {
-  final DataCollectionService<TodoItemModel> _todoCollection;
-
-  TodoDatasourceImpl(this._todoCollection);
+  TodoDatasourceImpl();
 
   @override
   Future<List<TodoItemModel>> getAllTodos() async {
-    return (await _todoCollection.getAll())
-      ..sort((a, b) => a.order.compareTo(b.order));
+    // TODO: implement
+    throw UnimplementedError();
   }
 
   @override
   Future<TodoItemModel> createOrUpdateTodo(TodoItem item) async {
-    final todo = TodoItemModel.fromItem(item);
-    await _todoCollection.create(todo);
-    return todo;
+    // TODO: implement
+    throw UnimplementedError();
   }
 
   @override
   Future<void> deleteTodo(String id) async {
-    await _todoCollection.delete(id);
+    // TODO: implement
+    throw UnimplementedError();
   }
 
   @override
   Future<void> updateTodosListOrder(List<TodoItem> itens) async {
-    for (var item in itens) {
-      await _todoCollection.update(TodoItemModel.fromItem(item));
-    }
+    // TODO: implement
+    throw UnimplementedError();
   }
 }
