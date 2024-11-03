@@ -1,5 +1,6 @@
 import 'package:todo_list/app/todo/data/models/todo_model.dart';
 import 'package:todo_list/app/todo/domain/entities/todo_item.dart';
+import 'package:todo_list/core/web_service/web_service.dart';
 
 abstract class TodoDatasource {
   Future<List<TodoItemModel>> getAllTodos();
@@ -9,12 +10,20 @@ abstract class TodoDatasource {
 }
 
 class TodoDatasourceImpl implements TodoDatasource {
-  TodoDatasourceImpl();
+  final WebService _todoRest;
+
+  TodoDatasourceImpl(this._todoRest);
 
   @override
   Future<List<TodoItemModel>> getAllTodos() async {
-    // TODO: implement
-    throw UnimplementedError();
+    final result =
+        await _todoRest.getList('/todo', (json) => TodoItemModel.fromMap(json));
+
+    if (result.success) {
+      return result.data;
+    } else {
+      throw result.failure!;
+    }
   }
 
   @override
@@ -25,13 +34,27 @@ class TodoDatasourceImpl implements TodoDatasource {
 
   @override
   Future<void> deleteTodo(String id) async {
-    // TODO: implement
-    throw UnimplementedError();
+    final result = await _todoRest.deleteModel('/todo/$id');
+
+    if (result.success) {
+      return;
+    } else {
+      throw result.failure!;
+    }
   }
 
   @override
   Future<void> updateTodosListOrder(List<TodoItem> itens) async {
-    // TODO: implement
-    throw UnimplementedError();
+    final result = await _todoRest.putList(
+      '/todo/all',
+      itens,
+      (json) => TodoItemModel.fromMap(json),
+    );
+
+    if (result.success) {
+      return;
+    } else {
+      throw result.failure!;
+    }
   }
 }

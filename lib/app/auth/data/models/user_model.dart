@@ -15,11 +15,11 @@ class UserModel extends User {
     };
   }
 
-  factory UserModel.fromFireDoc(String docId, Map<String, dynamic> map) {
+  factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: docId,
+      id: map['id'] as String,
       email: map['email'] as String,
-      name: map['name'] as String,
+      name: map['name'] as String?,
     );
   }
 }

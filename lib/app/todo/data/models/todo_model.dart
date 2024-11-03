@@ -24,9 +24,9 @@ class TodoItemModel extends TodoItem {
     };
   }
 
-  factory TodoItemModel.fromFireDoc(String docId, Map<String, dynamic> map) {
+  factory TodoItemModel.fromMap(Map<String, dynamic> map) {
     return TodoItemModel(
-      id: docId,
+      id: map['id'] as String,
       todo: map['todo'] as String,
       order: map['order'] as int,
       done: map['done'] as bool,

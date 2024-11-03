@@ -19,7 +19,10 @@ class AuthController {
     final result = await _getSessionUser();
 
     result.fold(
-      (l) {},
+      (l) {
+        //Change error state to show Alert
+        log(l.toString());
+      },
       (r) {
         _sessionController.setLoggedUser(r);
       },
@@ -31,7 +34,7 @@ class AuthController {
 
     await result.fold(
       (l) {
-        //show Alert / change error state
+        //Change error state to show Alert
         log(l.toString());
       },
       (logged) async {

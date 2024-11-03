@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart' as fire_auth;
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:todo_list/app/auth/data/models/user_model.dart';
 import 'package:todo_list/app/auth/domain/entities/user.dart';
 import 'package:todo_list/app/auth/domain/entities/user_not_authenticated_error.dart';
 import 'package:todo_list/core/general_app_failure.dart';
+import 'package:todo_list/core/web_service/web_service.dart';
 
 abstract class AuthDatasource {
   Future<User> getCurrentSessionUser();
@@ -14,10 +16,12 @@ abstract class AuthDatasource {
 class AuthDatasourceImpl implements AuthDatasource {
   final fire_auth.FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
+  final WebService _todoRest;
 
   AuthDatasourceImpl(
     this._firebaseAuth,
     this._googleSignIn,
+    this._todoRest,
   );
 
   @override
@@ -28,8 +32,21 @@ class AuthDatasourceImpl implements AuthDatasource {
       throw UserNotAuthenticated();
     }
 
-    // TODO: implement
-    throw UnimplementedError();
+    final result = await _todoRest.postModel(
+      '/auth',
+      {
+        'id': fireUser.uid,
+        'email': fireUser.email,
+        'name': fireUser.displayName,
+      },
+      (json) => UserModel.fromMap(json),
+    );
+
+    if (result.success) {
+      return result.data;
+    } else {
+      throw result.failure!;
+    }
   }
 
   @override
