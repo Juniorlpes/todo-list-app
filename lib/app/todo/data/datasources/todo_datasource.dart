@@ -4,7 +4,8 @@ import 'package:todo_list/core/web_service/web_service.dart';
 
 abstract class TodoDatasource {
   Future<List<TodoItemModel>> getAllTodos();
-  Future<TodoItemModel> createOrUpdateTodo(TodoItem item);
+  Future<TodoItemModel> createTodo(TodoItem item);
+  Future<TodoItemModel> updateTodo(TodoItem item);
   Future<void> deleteTodo(String id);
   Future<void> updateTodosListOrder(List<TodoItem> itens);
 }
@@ -27,9 +28,33 @@ class TodoDatasourceImpl implements TodoDatasource {
   }
 
   @override
-  Future<TodoItemModel> createOrUpdateTodo(TodoItem item) async {
-    // TODO: implement
-    throw UnimplementedError();
+  Future<TodoItemModel> createTodo(TodoItem item) async {
+    final result = await _todoRest.postModel(
+      '/todo',
+      item,
+      (json) => TodoItemModel.fromMap(json),
+    );
+
+    if (result.success) {
+      return result.data;
+    } else {
+      throw result.failure!;
+    }
+  }
+
+  @override
+  Future<TodoItemModel> updateTodo(TodoItem item) async {
+    final result = await _todoRest.putModel(
+      '/todo',
+      item,
+      (json) => TodoItemModel.fromMap(json),
+    );
+
+    if (result.success) {
+      return result.data;
+    } else {
+      throw result.failure!;
+    }
   }
 
   @override

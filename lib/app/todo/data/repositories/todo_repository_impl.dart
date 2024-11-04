@@ -15,7 +15,7 @@ class TodoRepositoryImpl implements TodoRepository {
   @override
   FutureEitherResult<TodoItem> createTodo(TodoItem item) async {
     try {
-      return right(await _localDatasource.createOrUpdateTodo(item));
+      return right(await _localDatasource.createTodo(item));
     } catch (e) {
       return left(e is GeneralAppFailure ? e : GeneralAppFailure());
     }
@@ -23,7 +23,11 @@ class TodoRepositoryImpl implements TodoRepository {
 
   @override
   FutureEitherResult<TodoItem> updateTodo(TodoItem item) async {
-    return await createTodo(item);
+    try {
+      return right(await _localDatasource.updateTodo(item));
+    } catch (e) {
+      return left(e is GeneralAppFailure ? e : GeneralAppFailure());
+    }
   }
 
   @override

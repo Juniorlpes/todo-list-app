@@ -25,7 +25,7 @@ void main() {
     final todoModel = TodoItemModel.fromItem(genericTodo);
     todoModel.done = true;
 
-    when(() => localDatasource.createOrUpdateTodo(genericTodo))
+    when(() => localDatasource.createTodo(genericTodo))
         .thenAnswer((_) async => todoModel);
 
     final result = await repository.createTodo(genericTodo);
@@ -38,7 +38,7 @@ void main() {
     expect(todoResult.done, true);
   });
   test('create todo withError', () async {
-    when(() => localDatasource.createOrUpdateTodo(any()))
+    when(() => localDatasource.createTodo(any()))
         .thenThrow(GeneralAppFailure(message: genericErrorMessage));
 
     GeneralAppFailure? failure;
@@ -49,8 +49,7 @@ void main() {
 
     expect(failure?.message, genericErrorMessage);
 
-    when(() => localDatasource.createOrUpdateTodo(any()))
-        .thenThrow(Exception());
+    when(() => localDatasource.createTodo(any())).thenThrow(Exception());
 
     result = await repository.createTodo(genericTodo);
 
@@ -94,7 +93,7 @@ void main() {
   test('update todo successfully', () async {
     final todoModel = TodoItemModel.fromItem(genericTodo);
 
-    when(() => localDatasource.createOrUpdateTodo(genericTodo))
+    when(() => localDatasource.updateTodo(genericTodo))
         .thenAnswer((_) async => todoModel);
 
     var result = await repository.updateTodo(genericTodo);
@@ -117,7 +116,7 @@ void main() {
     expect(todoResult.order, 5);
   });
   test('update todo withError', () async {
-    when(() => localDatasource.createOrUpdateTodo(any()))
+    when(() => localDatasource.updateTodo(any()))
         .thenThrow(GeneralAppFailure(message: genericErrorMessage));
 
     GeneralAppFailure? failure;
@@ -128,8 +127,7 @@ void main() {
 
     expect(failure?.message, genericErrorMessage);
 
-    when(() => localDatasource.createOrUpdateTodo(any()))
-        .thenThrow(Exception());
+    when(() => localDatasource.updateTodo(any())).thenThrow(Exception());
 
     result = await repository.updateTodo(genericTodo);
 
