@@ -1,17 +1,20 @@
 import '../general_app_failure.dart';
+import 'rest_status_code.dart';
 
-class WebResponse<T> {
+class RestResponse<T> {
   late T data;
   GeneralAppFailure? failure;
 
-  int? statusCode; //if you are using http service
+  final RestStatusCode statusCode;
+
+  RestResponse(this.statusCode);
 
   bool get success => failure == null;
 }
 
-abstract class WebService {
+abstract class RestService {
   ///Get a model from webService
-  Future<WebResponse<T>> getModel<T>(
+  Future<RestResponse<T>> getModel<T>(
     String path,
     //esses dynamic json poderia ser/são Map<String, dynamic>?
     T Function(dynamic json) parse, {
@@ -20,7 +23,7 @@ abstract class WebService {
   });
 
   ///Get a list model from webService
-  Future<WebResponse<List<T>>> getList<T>(
+  Future<RestResponse<List<T>>> getList<T>(
     String path,
     T Function(dynamic json) parse, {
     Map<String, dynamic>? query,
@@ -28,11 +31,11 @@ abstract class WebService {
   });
 
   ///Post a data and receive a model
-  Future<WebResponse<T>> postModel<T>(
+  Future<RestResponse<T>> postModel<T>(
       String path, dynamic body, T Function(dynamic json) parse);
 
   ///Post a data and receive a list model
-  Future<WebResponse<List<T>>> postList<T>(
+  Future<RestResponse<List<T>>> postList<T>(
     String path,
     dynamic body,
     T Function(dynamic json) parse, {
@@ -41,11 +44,11 @@ abstract class WebService {
   });
 
   ///Put a data and receive a model
-  Future<WebResponse<T>> putModel<T>(
+  Future<RestResponse<T>> putModel<T>(
       String path, dynamic body, T Function(dynamic json) parse);
 
   ///Post a data and receive a list model
-  Future<WebResponse<List<T>>> putList<T>(
+  Future<RestResponse<List<T>>> putList<T>(
     String path,
     dynamic body,
     T Function(dynamic json) parse, {
@@ -54,5 +57,5 @@ abstract class WebService {
   });
 
   ///Delete a model
-  Future<WebResponse<T>> deleteModel<T>(String path);
+  Future<RestResponse<T>> deleteModel<T>(String path);
 }

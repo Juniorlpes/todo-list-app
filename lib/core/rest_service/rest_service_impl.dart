@@ -5,16 +5,15 @@ import 'dio_interceptors/auth_interceptor.dart';
 import 'dio_interceptors/print_log_interceptor.dart';
 import '../general_app_failure.dart';
 import 'rest_status_code.dart';
-import 'web_service.dart';
+import 'rest_service.dart';
 
-//Monitorar performance pode ficar no datasource
-class WebServiceImpl implements WebService {
+class RestServiceImpl implements RestService {
   final _dio = Dio(BaseOptions(
     connectTimeout: const Duration(seconds: 20),
     receiveTimeout: const Duration(seconds: 20),
   ));
 
-  WebServiceImpl(
+  RestServiceImpl(
     String baseUrl, {
     List<Interceptor> interceptors = const [],
   }) {
@@ -29,7 +28,7 @@ class WebServiceImpl implements WebService {
     }
   }
 
-  factory WebServiceImpl.todoApi() => WebServiceImpl(
+  factory RestServiceImpl.todoApi() => RestServiceImpl(
         'http://192.168.1.11:3333/api',
         interceptors: [
           AuthInterceptor(
@@ -41,7 +40,7 @@ class WebServiceImpl implements WebService {
       );
 
   @override
-  Future<WebResponse<List<T>>> getList<T>(
+  Future<RestResponse<List<T>>> getList<T>(
     String path,
     T Function(Map<String, dynamic>? json) parse, {
     Map<String, dynamic>? query,
@@ -53,18 +52,20 @@ class WebServiceImpl implements WebService {
         queryParameters: query,
         options: Options(headers: headers),
       );
-      return WebResponse<List<T>>()..data = _parseList(result.data, parse);
+      return RestResponse<List<T>>(RestStatusCode.fromInt(result.statusCode))
+        ..data = _parseList(result.data, parse);
     } on DioException catch (err) {
-      return WebResponse<List<T>>()
-        ..failure = _getFailureFromDioError(err)
-        ..statusCode = err.response?.statusCode;
+      return RestResponse<List<T>>(
+          RestStatusCode.fromInt(err.response?.statusCode))
+        ..failure = _getFailureFromDioError(err);
     } catch (e) {
-      return WebResponse<List<T>>()..failure = GeneralAppFailure();
+      return RestResponse<List<T>>(RestStatusCode.unknow)
+        ..failure = GeneralAppFailure();
     }
   }
 
   @override
-  Future<WebResponse<T>> getModel<T>(
+  Future<RestResponse<T>> getModel<T>(
     String path,
     T Function(Map<String, dynamic>? json) parse, {
     Map<String, dynamic>? query,
@@ -72,18 +73,19 @@ class WebServiceImpl implements WebService {
   }) async {
     try {
       final result = await _dio.get(path, queryParameters: query);
-      return WebResponse<T>()..data = parse(result.data);
+      return RestResponse<T>(RestStatusCode.fromInt(result.statusCode))
+        ..data = parse(result.data);
     } on DioException catch (err) {
-      return WebResponse<T>()
-        ..failure = _getFailureFromDioError(err)
-        ..statusCode = err.response?.statusCode;
+      return RestResponse<T>(RestStatusCode.fromInt(err.response?.statusCode))
+        ..failure = _getFailureFromDioError(err);
     } catch (e) {
-      return WebResponse<T>()..failure = GeneralAppFailure();
+      return RestResponse<T>(RestStatusCode.unknow)
+        ..failure = GeneralAppFailure();
     }
   }
 
   @override
-  Future<WebResponse<List<T>>> postList<T>(
+  Future<RestResponse<List<T>>> postList<T>(
     String path,
     body,
     T Function(Map<String, dynamic>? json) parse, {
@@ -97,48 +99,52 @@ class WebServiceImpl implements WebService {
         queryParameters: query,
         options: Options(headers: headers),
       );
-      return WebResponse<List<T>>()..data = _parseList(result.data, parse);
+      return RestResponse<List<T>>(RestStatusCode.fromInt(result.statusCode))
+        ..data = _parseList(result.data, parse);
     } on DioException catch (err) {
-      return WebResponse<List<T>>()
-        ..failure = _getFailureFromDioError(err)
-        ..statusCode = err.response?.statusCode;
+      return RestResponse<List<T>>(
+          RestStatusCode.fromInt(err.response?.statusCode))
+        ..failure = _getFailureFromDioError(err);
     } catch (e) {
-      return WebResponse<List<T>>()..failure = GeneralAppFailure();
+      return RestResponse<List<T>>(RestStatusCode.unknow)
+        ..failure = GeneralAppFailure();
     }
   }
 
   @override
-  Future<WebResponse<T>> postModel<T>(
+  Future<RestResponse<T>> postModel<T>(
       String path, body, T Function(Map<String, dynamic>? json) parse) async {
     try {
       final result = await _dio.post(path, data: body);
-      return WebResponse<T>()..data = parse(result.data);
+      return RestResponse<T>(RestStatusCode.fromInt(result.statusCode))
+        ..data = parse(result.data);
     } on DioException catch (err) {
-      return WebResponse<T>()
-        ..failure = _getFailureFromDioError(err)
-        ..statusCode = err.response?.statusCode;
+      return RestResponse<T>(RestStatusCode.fromInt(err.response?.statusCode))
+        ..failure = _getFailureFromDioError(err);
     } catch (e) {
-      return WebResponse<T>()..failure = GeneralAppFailure();
+      return RestResponse<T>(RestStatusCode.unknow)
+        ..failure = GeneralAppFailure();
     }
   }
 
   @override
-  Future<WebResponse<T>> putModel<T>(
+  Future<RestResponse<T>> putModel<T>(
       String path, body, T Function(dynamic json) parse) async {
     try {
       final result = await _dio.put(path, data: body);
-      return WebResponse<T>()..data = parse(result.data);
+      return RestResponse<T>(RestStatusCode.fromInt(result.statusCode))
+        ..data = parse(result.data);
     } on DioException catch (err) {
-      return WebResponse<T>()
-        ..failure = _getFailureFromDioError(err)
-        ..statusCode = err.response?.statusCode;
+      return RestResponse<T>(RestStatusCode.fromInt(err.response?.statusCode))
+        ..failure = _getFailureFromDioError(err);
     } catch (e) {
-      return WebResponse<T>()..failure = GeneralAppFailure();
+      return RestResponse<T>(RestStatusCode.unknow)
+        ..failure = GeneralAppFailure();
     }
   }
 
   @override
-  Future<WebResponse<List<T>>> putList<T>(
+  Future<RestResponse<List<T>>> putList<T>(
     String path,
     body,
     T Function(Map<String, dynamic>? json) parse, {
@@ -152,27 +158,29 @@ class WebServiceImpl implements WebService {
         queryParameters: query,
         options: Options(headers: headers),
       );
-      return WebResponse<List<T>>()..data = _parseList(result.data, parse);
+      return RestResponse<List<T>>(RestStatusCode.fromInt(result.statusCode))
+        ..data = _parseList(result.data, parse);
     } on DioException catch (err) {
-      return WebResponse<List<T>>()
-        ..failure = _getFailureFromDioError(err)
-        ..statusCode = err.response?.statusCode;
+      return RestResponse<List<T>>(
+          RestStatusCode.fromInt(err.response?.statusCode))
+        ..failure = _getFailureFromDioError(err);
     } catch (e) {
-      return WebResponse<List<T>>()..failure = GeneralAppFailure();
+      return RestResponse<List<T>>(RestStatusCode.unknow)
+        ..failure = GeneralAppFailure();
     }
   }
 
   @override
-  Future<WebResponse<T>> deleteModel<T>(String path) async {
+  Future<RestResponse<T>> deleteModel<T>(String path) async {
     try {
-      await _dio.delete(path);
-      return WebResponse<T>();
+      final result = await _dio.delete(path);
+      return RestResponse<T>(RestStatusCode.fromInt(result.statusCode));
     } on DioException catch (err) {
-      return WebResponse<T>()
-        ..failure = _getFailureFromDioError(err)
-        ..statusCode = err.response?.statusCode;
+      return RestResponse<T>(RestStatusCode.fromInt(err.response?.statusCode))
+        ..failure = _getFailureFromDioError(err);
     } catch (e) {
-      return WebResponse<T>()..failure = GeneralAppFailure();
+      return RestResponse<T>(RestStatusCode.unknow)
+        ..failure = GeneralAppFailure();
     }
   }
 
@@ -180,27 +188,26 @@ class WebServiceImpl implements WebService {
   GeneralAppFailure _getFailureFromDioError(DioException error) {
     if (error.response == null) {
       return GeneralAppFailure(
-        statusCode: RestStatusCode.fromInt(error.response?.statusCode ?? 0),
+        message: RestStatusCode.fromInt(error.response?.statusCode).name,
       );
     }
     switch (error.response?.statusCode) {
       case 404:
         return GeneralAppFailure(
-          statusCode: RestStatusCode.fromInt(error.response?.statusCode ?? 0),
+          message: RestStatusCode.fromInt(error.response?.statusCode).name,
         );
       case 500:
         return GeneralAppFailure(
-          statusCode: RestStatusCode.fromInt(error.response?.statusCode ?? 0),
+          message: RestStatusCode.fromInt(error.response?.statusCode).name,
         );
       case 400:
       case 401:
         return GeneralAppFailure(
-          statusCode: RestStatusCode.fromInt(error.response?.statusCode ?? 0),
+          message: RestStatusCode.fromInt(error.response?.statusCode).name,
         );
       default:
         return GeneralAppFailure(
-          message: 'Unknown',
-          statusCode: RestStatusCode.fromInt(error.response?.statusCode ?? 0),
+          message: RestStatusCode.fromInt(error.response?.statusCode).name,
         );
     }
   }

@@ -82,7 +82,7 @@ enum RestStatusCode {
   @override
   String toString() => name;
 
-  factory RestStatusCode.fromInt(int code) {
+  factory RestStatusCode.fromInt(int? code) {
     switch (code) {
       case 10:
         return RestStatusCode.connectionError;

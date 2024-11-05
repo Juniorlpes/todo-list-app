@@ -1,6 +1,7 @@
 import 'package:todo_list/app/todo/data/models/todo_model.dart';
 import 'package:todo_list/app/todo/domain/entities/todo_item.dart';
-import 'package:todo_list/core/web_service/web_service.dart';
+import 'package:todo_list/core/general_app_failure.dart';
+import 'package:todo_list/core/rest_service/rest_service.dart';
 
 abstract class TodoDatasource {
   Future<List<TodoItemModel>> getAllTodos();
@@ -11,7 +12,7 @@ abstract class TodoDatasource {
 }
 
 class TodoDatasourceImpl implements TodoDatasource {
-  final WebService _todoRest;
+  final RestService _todoRest;
 
   TodoDatasourceImpl(this._todoRest);
 
@@ -23,7 +24,9 @@ class TodoDatasourceImpl implements TodoDatasource {
     if (result.success) {
       return result.data;
     } else {
-      throw result.failure!;
+      throw GeneralAppFailure()
+        ..message = result.failure?.message
+        ..statusCode = result.statusCode;
     }
   }
 
@@ -31,14 +34,16 @@ class TodoDatasourceImpl implements TodoDatasource {
   Future<TodoItemModel> createTodo(TodoItem item) async {
     final result = await _todoRest.postModel(
       '/todo',
-      item,
+      TodoItemModel.fromItem(item).toMap(),
       (json) => TodoItemModel.fromMap(json),
     );
 
     if (result.success) {
       return result.data;
     } else {
-      throw result.failure!;
+      throw GeneralAppFailure()
+        ..message = result.failure?.message
+        ..statusCode = result.statusCode;
     }
   }
 
@@ -46,14 +51,16 @@ class TodoDatasourceImpl implements TodoDatasource {
   Future<TodoItemModel> updateTodo(TodoItem item) async {
     final result = await _todoRest.putModel(
       '/todo',
-      item,
+      TodoItemModel.fromItem(item).toMap(),
       (json) => TodoItemModel.fromMap(json),
     );
 
     if (result.success) {
       return result.data;
     } else {
-      throw result.failure!;
+      throw GeneralAppFailure()
+        ..message = result.failure?.message
+        ..statusCode = result.statusCode;
     }
   }
 
@@ -64,7 +71,9 @@ class TodoDatasourceImpl implements TodoDatasource {
     if (result.success) {
       return;
     } else {
-      throw result.failure!;
+      throw GeneralAppFailure()
+        ..message = result.failure?.message
+        ..statusCode = result.statusCode;
     }
   }
 
@@ -72,14 +81,16 @@ class TodoDatasourceImpl implements TodoDatasource {
   Future<void> updateTodosListOrder(List<TodoItem> itens) async {
     final result = await _todoRest.putList(
       '/todo/all',
-      itens,
+      itens.map((e) => TodoItemModel.fromItem(e).toMap()).toList(),
       (json) => TodoItemModel.fromMap(json),
     );
 
     if (result.success) {
       return;
     } else {
-      throw result.failure!;
+      throw GeneralAppFailure()
+        ..message = result.failure?.message
+        ..statusCode = result.statusCode;
     }
   }
 }

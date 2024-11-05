@@ -1,4 +1,4 @@
-import 'web_service/rest_status_code.dart';
+import 'rest_service/rest_status_code.dart';
 
 class GeneralAppFailure implements Exception {
   String? message;
