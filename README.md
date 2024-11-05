@@ -10,4 +10,5 @@ This Todo List has four branchs/version: <br />
 1 - Local data storage <mark><b>[Current branch]</b></mark> <br />
 2 - With Auth option and Firestore sdk to store and access data <br />
 &emsp;* You need to set up your own Firebase project to run this branch. <br />
-3 - Data access from a API Rest :hourglass: <br />
+3 - Data access from a API Rest  <br />
+&emsp;* If you want to run this branch, you will need to set up your own Firebase project and run my [todo-list-api](https://github.com/Juniorlpes/todo-list-api).
