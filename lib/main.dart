@@ -5,8 +5,6 @@ import 'package:todo_list/app/app_widget.dart';
 
 import 'firebase_options.dart';
 
-//TODO: Datasource tests
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
