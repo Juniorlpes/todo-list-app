@@ -12,7 +12,7 @@ import 'package:todo_list/app/auth/domain/usecases/log_in_google.dart';
 import 'package:todo_list/app/auth/domain/usecases/log_out.dart';
 import 'package:todo_list/app/auth/presenter/controllers/auth_controller.dart';
 import 'package:todo_list/app/auth/session_controller.dart';
-import 'package:todo_list/core/rest_service/rest_service_impl.dart';
+import 'package:todo_list/core/rest_service/todo_rest_api.dart';
 
 final _getIt = GetIt.instance;
 
@@ -32,7 +32,7 @@ void registerExportedAuthModuleDependencies() {
             'email',
           ],
         ),
-        RestServiceImpl.todoApi(),
+        TodoRestApi(),
       ),
     ),
   );

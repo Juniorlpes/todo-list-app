@@ -1,7 +1,7 @@
 import 'package:todo_list/app/todo/data/models/todo_model.dart';
 import 'package:todo_list/app/todo/domain/entities/todo_item.dart';
 import 'package:todo_list/core/general_app_failure.dart';
-import 'package:todo_list/core/rest_service/rest_service.dart';
+import 'package:todo_list/core/rest_service/todo_rest_api.dart';
 
 abstract class TodoDatasource {
   Future<List<TodoItemModel>> getAllTodos();
@@ -12,20 +12,20 @@ abstract class TodoDatasource {
 }
 
 class TodoDatasourceImpl implements TodoDatasource {
-  final RestService _todoRest;
+  final TodoRestApi _todoRest;
 
   TodoDatasourceImpl(this._todoRest);
 
   @override
   Future<List<TodoItemModel>> getAllTodos() async {
-    final result =
-        await _todoRest.getList('/todo', (json) => TodoItemModel.fromMap(json));
+    final result = await _todoRest.getList(
+        '/todo', (json) => TodoItemModel.fromMap(json!));
 
     if (result.success) {
       return result.data;
     } else {
       throw GeneralAppFailure()
-        ..message = result.failure?.message
+        ..message = result.exception?.message
         ..statusCode = result.statusCode;
     }
   }
@@ -35,14 +35,14 @@ class TodoDatasourceImpl implements TodoDatasource {
     final result = await _todoRest.postModel(
       '/todo',
       TodoItemModel.fromItem(item).toMap(),
-      (json) => TodoItemModel.fromMap(json),
+      (json) => TodoItemModel.fromMap(json!),
     );
 
     if (result.success) {
       return result.data;
     } else {
       throw GeneralAppFailure()
-        ..message = result.failure?.message
+        ..message = result.exception?.message
         ..statusCode = result.statusCode;
     }
   }
@@ -59,7 +59,7 @@ class TodoDatasourceImpl implements TodoDatasource {
       return result.data;
     } else {
       throw GeneralAppFailure()
-        ..message = result.failure?.message
+        ..message = result.exception?.message
         ..statusCode = result.statusCode;
     }
   }
@@ -72,7 +72,7 @@ class TodoDatasourceImpl implements TodoDatasource {
       return;
     } else {
       throw GeneralAppFailure()
-        ..message = result.failure?.message
+        ..message = result.exception?.message
         ..statusCode = result.statusCode;
     }
   }
@@ -89,7 +89,7 @@ class TodoDatasourceImpl implements TodoDatasource {
       return;
     } else {
       throw GeneralAppFailure()
-        ..message = result.failure?.message
+        ..message = result.exception?.message
         ..statusCode = result.statusCode;
     }
   }

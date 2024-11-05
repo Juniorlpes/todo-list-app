@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:simple_rest_service/rest_service.dart';
 import 'package:todo_list/app/todo/data/datasources/todo_datasource.dart';
 import 'package:todo_list/app/todo/data/models/todo_model.dart';
 import 'package:todo_list/app/todo/domain/entities/todo_item.dart';
-import 'package:todo_list/core/rest_service/rest_service.dart';
-import 'package:todo_list/core/rest_service/rest_status_code.dart';
+import 'package:todo_list/core/rest_service/todo_rest_api.dart';
 
-class MockRestService extends Mock implements RestService {}
+class MockRestService extends Mock implements TodoRestApi {}
 
 void main() {
   final todoApi = MockRestService();

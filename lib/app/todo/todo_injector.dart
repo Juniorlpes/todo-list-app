@@ -7,7 +7,7 @@ import 'package:todo_list/app/todo/domain/usecases/delete_todo.dart';
 import 'package:todo_list/app/todo/domain/usecases/get_todo_list.dart';
 import 'package:todo_list/app/todo/domain/usecases/update_todo.dart';
 import 'package:todo_list/app/todo/domain/usecases/update_todo_list.dart';
-import 'package:todo_list/core/rest_service/rest_service_impl.dart';
+import 'package:todo_list/core/rest_service/todo_rest_api.dart';
 
 import 'presenter/stores/todos_list_store.dart';
 
@@ -17,7 +17,7 @@ void registerTodoModuleDependencies() {
   _getIt.registerLazySingleton<TodoRepository>(
     () => TodoRepositoryImpl(
       TodoDatasourceImpl(
-        RestServiceImpl.todoApi(),
+        TodoRestApi(),
       ),
     ),
   );

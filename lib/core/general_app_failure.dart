@@ -1,8 +1,7 @@
-import 'rest_service/rest_status_code.dart';
-
 class GeneralAppFailure implements Exception {
   String? message;
-  RestStatusCode? statusCode;
+
+  int? statusCode;
 
   GeneralAppFailure({this.message, this.statusCode});
 

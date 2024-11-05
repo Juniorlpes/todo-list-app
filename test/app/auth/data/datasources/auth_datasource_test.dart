@@ -2,10 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:simple_rest_service/rest_service.dart';
 import 'package:todo_list/app/auth/data/datasources/auth_datasource.dart';
 import 'package:todo_list/app/auth/data/models/user_model.dart';
-import 'package:todo_list/core/rest_service/rest_service.dart';
-import 'package:todo_list/core/rest_service/rest_status_code.dart';
+import 'package:todo_list/core/rest_service/todo_rest_api.dart';
 
 class MockFireAuth extends Mock implements FirebaseAuth {}
 
@@ -22,7 +22,7 @@ class MockUserCredential extends Mock implements UserCredential {}
 
 class MockFireUser extends Mock implements User {}
 
-class MockRestService extends Mock implements RestService {}
+class MockRestService extends Mock implements TodoRestApi {}
 
 void main() {
   final fireAuth = MockFireAuth();
