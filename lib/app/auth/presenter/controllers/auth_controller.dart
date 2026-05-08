@@ -1,22 +1,19 @@
 import 'dart:developer';
 
-import 'package:todo_list/app/auth/domain/usecases/get_session_user.dart';
-import 'package:todo_list/app/auth/domain/usecases/log_in_google.dart';
+import 'package:todo_list/app/auth/domain/repositories/auth_repository.dart';
 import 'package:todo_list/app/auth/session_controller.dart';
 
 class AuthController {
-  final GetSessionUser _getSessionUser;
-  final LogInGoogle _logInGoogle;
+  final AuthRepository _repository;
   final SessionController _sessionController;
 
   AuthController(
-    this._getSessionUser,
-    this._logInGoogle,
+    this._repository,
     this._sessionController,
   );
 
   Future<void> getSessionUser() async {
-    final result = await _getSessionUser();
+    final result = await _repository.getCurrentSessionUser();
 
     result.fold(
       (l) {},
@@ -27,11 +24,10 @@ class AuthController {
   }
 
   Future logIn() async {
-    final result = await _logInGoogle();
+    final result = await _repository.logInWithGoogle();
 
     await result.fold(
       (l) {
-        //show Alert / change error state
         log(l.toString());
       },
       (logged) async {

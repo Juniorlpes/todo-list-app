@@ -1,18 +1,29 @@
 import 'package:todo_list/shared/utils/id_generator.dart';
 
 class TodoItem implements Comparable<TodoItem> {
-  late final String id;
-  int order;
-  String todo;
-  bool done;
+  final String id;
+  final int order;
+  final String todo;
+  final bool done;
 
   TodoItem({
     required this.todo,
     required this.order,
     this.done = false,
     String? id,
+  }) : id = id ?? getNewXid();
+
+  TodoItem copyWith({
+    String? todo,
+    int? order,
+    bool? done,
   }) {
-    this.id = id ?? getNewXid();
+    return TodoItem(
+      id: id,
+      todo: todo ?? this.todo,
+      order: order ?? this.order,
+      done: done ?? this.done,
+    );
   }
 
   @override

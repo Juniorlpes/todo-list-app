@@ -5,7 +5,7 @@ import 'package:todo_list/app/auth/data/models/user_model.dart';
 import 'package:todo_list/app/auth/domain/entities/user.dart';
 import 'package:todo_list/app/auth/domain/entities/user_not_authenticated_error.dart';
 import 'package:todo_list/core/firebase/firestore_collection_service.dart';
-import 'package:todo_list/core/general_app_failure.dart';
+import 'package:todo_list/core/app_failure.dart';
 
 abstract class AuthDatasource {
   Future<User> getCurrentSessionUser();
@@ -29,7 +29,7 @@ class AuthDatasourceImpl implements AuthDatasource {
     final fireUser = _firebaseAuth.currentUser;
 
     if (fireUser == null) {
-      throw UserNotAuthenticated();
+      throw const UserNotAuthenticated();
     }
 
     final user = await _usersCollection.getById(fireUser.uid);
@@ -55,7 +55,7 @@ class AuthDatasourceImpl implements AuthDatasource {
     } else {
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        throw GeneralAppFailure(message: 'googleUser null');
+        throw const UnexpectedFailure(message: 'googleUser null');
       }
 
       final googleAuth = await googleUser.authentication;

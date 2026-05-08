@@ -5,7 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:todo_list/app/todo/data/models/todo_model.dart';
 import 'package:todo_list/app/todo/data/repositories/todo_repository_impl.dart';
 import 'package:todo_list/app/todo/domain/entities/todo_item.dart';
-import 'package:todo_list/core/general_app_failure.dart';
+import 'package:todo_list/core/app_failure.dart';
 
 class MockLocalDatasource extends Mock implements TodoDatasource {}
 
@@ -22,8 +22,9 @@ void main() {
   });
 
   test('create todo successfully', () async {
-    final todoModel = TodoItemModel.fromItem(genericTodo);
-    todoModel.done = true;
+    final todoModel = TodoItemModel.fromItem(
+      genericTodo.copyWith(done: true),
+    );
 
     when(() => localDatasource.createOrUpdateTodo(genericTodo))
         .thenAnswer((_) async => todoModel);
@@ -39,9 +40,9 @@ void main() {
   });
   test('create todo withError', () async {
     when(() => localDatasource.createOrUpdateTodo(any()))
-        .thenThrow(GeneralAppFailure(message: genericErrorMessage));
+        .thenThrow(const UnexpectedFailure(message: genericErrorMessage));
 
-    GeneralAppFailure? failure;
+    AppFailure? failure;
 
     var result = await repository.createTodo(genericTodo);
 
@@ -56,8 +57,8 @@ void main() {
 
     result.fold((l) => failure = l, (r) => null);
 
-    expect(failure?.message == null, true);
-    expect(failure is GeneralAppFailure, true);
+    expect(failure?.message != null, true);
+    expect(failure is AppFailure, true);
   });
 
   test('delete todo successfully', () async {
@@ -71,9 +72,9 @@ void main() {
   });
   test('delete todo withError', () async {
     when(() => localDatasource.deleteTodo(any()))
-        .thenThrow(GeneralAppFailure(message: genericErrorMessage));
+        .thenThrow(const UnexpectedFailure(message: genericErrorMessage));
 
-    GeneralAppFailure? failure;
+    AppFailure? failure;
 
     var result = await repository.deleteTodo(genericTodo.id);
 
@@ -87,8 +88,8 @@ void main() {
 
     result.fold((l) => failure = l, (r) => null);
 
-    expect(failure?.message == null, true);
-    expect(failure is GeneralAppFailure, true);
+    expect(failure?.message != null, true);
+    expect(failure is AppFailure, true);
   });
 
   test('update todo successfully', () async {
@@ -107,8 +108,12 @@ void main() {
     expect(todoResult.done, false);
     expect(todoResult.order, 0);
 
-    todoModel.done = true;
-    todoModel.order = 5;
+    final updatedModel = TodoItemModel.fromItem(
+      genericTodo.copyWith(done: true, order: 5),
+    );
+
+    when(() => localDatasource.createOrUpdateTodo(genericTodo))
+        .thenAnswer((_) async => updatedModel);
 
     result = await repository.updateTodo(genericTodo);
     result.fold((l) => null, (r) => todoResult = r);
@@ -118,9 +123,9 @@ void main() {
   });
   test('update todo withError', () async {
     when(() => localDatasource.createOrUpdateTodo(any()))
-        .thenThrow(GeneralAppFailure(message: genericErrorMessage));
+        .thenThrow(const UnexpectedFailure(message: genericErrorMessage));
 
-    GeneralAppFailure? failure;
+    AppFailure? failure;
 
     var result = await repository.updateTodo(genericTodo);
 
@@ -135,8 +140,8 @@ void main() {
 
     result.fold((l) => failure = l, (r) => null);
 
-    expect(failure?.message == null, true);
-    expect(failure is GeneralAppFailure, true);
+    expect(failure?.message != null, true);
+    expect(failure is AppFailure, true);
   });
 
   test('getAll todo successfully', () async {
@@ -155,7 +160,13 @@ void main() {
     expect(todoResult.length, 2);
     expect(todoResult.last.id, '2');
 
-    todos.first.order = 10;
+    final reorderedTodos = [
+      TodoItemModel.fromItem(todoModel1.copyWith(order: 10)),
+      todoModel2,
+    ];
+
+    when(() => localDatasource.getAllTodos())
+        .thenAnswer((_) async => reorderedTodos);
 
     result = await repository.getAllTodosList();
     result.fold((l) => null, (r) => todoResult = r);
@@ -165,9 +176,9 @@ void main() {
   });
   test('getAll todo withError', () async {
     when(() => localDatasource.getAllTodos())
-        .thenThrow(GeneralAppFailure(message: genericErrorMessage));
+        .thenThrow(const UnexpectedFailure(message: genericErrorMessage));
 
-    GeneralAppFailure? failure;
+    AppFailure? failure;
 
     var result = await repository.getAllTodosList();
 
@@ -181,8 +192,8 @@ void main() {
 
     result.fold((l) => failure = l, (r) => null);
 
-    expect(failure?.message == null, true);
-    expect(failure is GeneralAppFailure, true);
+    expect(failure?.message != null, true);
+    expect(failure is AppFailure, true);
   });
 
   test('updateAll todo successfully', () async {
@@ -202,9 +213,9 @@ void main() {
   });
   test('updateAll todo withError', () async {
     when(() => localDatasource.updateTodosListOrder(any()))
-        .thenThrow(GeneralAppFailure(message: genericErrorMessage));
+        .thenThrow(const UnexpectedFailure(message: genericErrorMessage));
 
-    GeneralAppFailure? failure;
+    AppFailure? failure;
 
     var result = await repository.updateTodoListOrder([]);
 
@@ -219,7 +230,7 @@ void main() {
 
     result.fold((l) => failure = l, (r) => null);
 
-    expect(failure?.message == null, true);
-    expect(failure is GeneralAppFailure, true);
+    expect(failure?.message != null, true);
+    expect(failure is AppFailure, true);
   });
 }

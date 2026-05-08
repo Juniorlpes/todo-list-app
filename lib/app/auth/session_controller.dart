@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:todo_list/app/auth/domain/entities/user.dart';
-import 'package:todo_list/app/auth/domain/usecases/log_out.dart';
+import 'package:todo_list/app/auth/domain/repositories/auth_repository.dart';
 
 class SessionController extends ValueNotifier<User?> {
-  final LogOut _logOut;
+  final AuthRepository _repository;
 
-  SessionController(this._logOut) : super(null);
+  SessionController(this._repository) : super(null);
 
   User get currentUser => value!;
   bool get isLogged => value != null;
@@ -16,6 +16,6 @@ class SessionController extends ValueNotifier<User?> {
 
   Future<void> logOut() async {
     value = null;
-    await _logOut();
+    await _repository.logOut();
   }
 }

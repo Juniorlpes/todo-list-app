@@ -1,4 +1,4 @@
-import '../../../../../core/general_app_failure.dart';
+import '../../../../../core/app_failure.dart';
 import '../../../domain/entities/todo_item.dart';
 
 abstract class TodoListState {}
@@ -6,13 +6,13 @@ abstract class TodoListState {}
 class LoadingTodosState extends TodoListState {}
 
 class FailureTodosState extends TodoListState {
-  GeneralAppFailure failure;
+  final AppFailure failure;
 
   FailureTodosState(this.failure);
 }
 
-class SuccessTodosFailure extends TodoListState {
-  List<TodoItem> todosItens; //final?
+class SuccessTodosState extends TodoListState {
+  final List<TodoItem> todosItens;
 
-  SuccessTodosFailure(this.todosItens);
+  SuccessTodosState(this.todosItens);
 }

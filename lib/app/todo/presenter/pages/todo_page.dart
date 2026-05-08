@@ -51,7 +51,7 @@ class TodoPage extends StatelessWidget {
               ),
             );
           } else {
-            value as SuccessTodosFailure;
+            value as SuccessTodosState;
 
             // RefreshIndicator(
             //   onRefresh: todosStore.getAllTodoItens,
@@ -76,9 +76,9 @@ class TodoPage extends StatelessWidget {
                   value: value.todosItens[idx].done,
                   tristate: false,
                   onChanged: (b) {
-                    value.todosItens[idx].done = b!;
-
-                    todosStore.updateTodo(value.todosItens[idx]);
+                    todosStore.updateTodo(
+                      value.todosItens[idx].copyWith(done: b!),
+                    );
                   },
                 ),
               ),
@@ -89,10 +89,10 @@ class TodoPage extends StatelessWidget {
       floatingActionButton: ValueListenableBuilder<TodoListState>(
         valueListenable: todosStore,
         builder: (_, value, __) => Visibility(
-          visible: value is SuccessTodosFailure,
+          visible: value is SuccessTodosState,
           child: FloatingActionButton(
             onPressed: () {
-              value as SuccessTodosFailure;
+              value as SuccessTodosState;
 
               showDialog(
                 context: context,

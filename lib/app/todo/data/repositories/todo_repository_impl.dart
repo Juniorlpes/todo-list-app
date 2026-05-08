@@ -1,6 +1,6 @@
 import 'package:todo_list/app/todo/data/datasources/todo_datasource.dart';
 import 'package:todo_list/app/todo/domain/entities/todo_item.dart';
-import 'package:todo_list/core/general_app_failure.dart';
+import 'package:todo_list/core/app_failure.dart';
 import 'package:todo_list/core/utils/either.dart';
 
 import 'package:todo_list/core/utils/typedefs.dart';
@@ -17,7 +17,8 @@ class TodoRepositoryImpl implements TodoRepository {
     try {
       return right(await _localDatasource.createOrUpdateTodo(item));
     } catch (e) {
-      return left(e is GeneralAppFailure ? e : GeneralAppFailure());
+      return left(
+          e is AppFailure ? e : UnexpectedFailure(message: e.toString()));
     }
   }
 
@@ -31,7 +32,8 @@ class TodoRepositoryImpl implements TodoRepository {
     try {
       return right(await _localDatasource.deleteTodo(id));
     } catch (e) {
-      return left(e is GeneralAppFailure ? e : GeneralAppFailure());
+      return left(
+          e is AppFailure ? e : UnexpectedFailure(message: e.toString()));
     }
   }
 
@@ -41,7 +43,8 @@ class TodoRepositoryImpl implements TodoRepository {
       final allLocal = await _localDatasource.getAllTodos();
       return right(allLocal..sort());
     } catch (e) {
-      return left(e is GeneralAppFailure ? e : GeneralAppFailure());
+      return left(
+          e is AppFailure ? e : UnexpectedFailure(message: e.toString()));
     }
   }
 
@@ -50,7 +53,8 @@ class TodoRepositoryImpl implements TodoRepository {
     try {
       return right(await _localDatasource.updateTodosListOrder(itens));
     } catch (e) {
-      return left(e is GeneralAppFailure ? e : GeneralAppFailure());
+      return left(
+          e is AppFailure ? e : UnexpectedFailure(message: e.toString()));
     }
   }
 }

@@ -2,7 +2,7 @@ import 'package:todo_list/app/auth/data/datasources/auth_datasource.dart';
 import 'package:todo_list/app/auth/domain/entities/user.dart';
 import 'package:todo_list/app/auth/domain/entities/user_not_authenticated_error.dart';
 import 'package:todo_list/app/auth/domain/repositories/auth_repository.dart';
-import 'package:todo_list/core/general_app_failure.dart';
+import 'package:todo_list/core/app_failure.dart';
 import 'package:todo_list/core/utils/either.dart';
 import 'package:todo_list/core/utils/typedefs.dart';
 
@@ -18,7 +18,8 @@ class AuthRepositoryImpl implements AuthRepository {
     } on UserNotAuthenticated catch (e) {
       return left(e);
     } catch (e) {
-      return left(e is GeneralAppFailure ? e : GeneralAppFailure());
+      return left(
+          e is AppFailure ? e : UnexpectedFailure(message: e.toString()));
     }
   }
 
@@ -27,7 +28,8 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       return right(await _datasource.logInWithGoogle());
     } catch (e) {
-      return left(e is GeneralAppFailure ? e : GeneralAppFailure());
+      return left(
+          e is AppFailure ? e : UnexpectedFailure(message: e.toString()));
     }
   }
 
@@ -36,7 +38,8 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       return right(await _datasource.logOut());
     } catch (e) {
-      return left(e is GeneralAppFailure ? e : GeneralAppFailure());
+      return left(
+          e is AppFailure ? e : UnexpectedFailure(message: e.toString()));
     }
   }
 }

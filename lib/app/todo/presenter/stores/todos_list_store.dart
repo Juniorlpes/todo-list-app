@@ -1,92 +1,87 @@
 import 'package:flutter/foundation.dart';
 import 'package:todo_list/app/todo/data/models/todo_model.dart';
 import 'package:todo_list/app/todo/domain/entities/todo_item.dart';
-import 'package:todo_list/app/todo/domain/usecases/create_todo.dart';
-import 'package:todo_list/app/todo/domain/usecases/delete_todo.dart';
-import 'package:todo_list/app/todo/domain/usecases/get_todo_list.dart';
-import 'package:todo_list/app/todo/domain/usecases/update_todo.dart';
-import 'package:todo_list/app/todo/domain/usecases/update_todo_list.dart';
+import 'package:todo_list/app/todo/domain/repositories/todo_repository.dart';
 
 import 'package:todo_list/app/todo/presenter/stores/states/todos_state.dart';
 
 export 'package:todo_list/app/todo/presenter/stores/states/todos_state.dart';
 
 class TodosListStore extends ValueNotifier<TodoListState> {
-  final CreateTodo _createTodo;
-  final UpdateTodo _updateTodo;
-  final DeleteTodo _deleteTodo;
-  final GetTodosList _getTodosList;
-  final UpdateTodoList _updateTodoList;
+  final TodoRepository _repository;
 
-  TodosListStore(
-    this._createTodo,
-    this._updateTodo,
-    this._deleteTodo,
-    this._getTodosList,
-    this._updateTodoList,
-  ) : super(LoadingTodosState()) {
+  TodosListStore(this._repository) : super(LoadingTodosState()) {
     getAllTodoItens();
   }
+
+  List<TodoItem>? get _currentTodos => value is SuccessTodosState
+      ? (value as SuccessTodosState).todosItens
+      : null;
 
   Future<void> getAllTodoItens() async {
     value = LoadingTodosState();
 
-    final result = await _getTodosList();
+    final result = await _repository.getAllTodosList();
 
     result.fold(
       (l) => value = FailureTodosState(l),
-      (r) => value = SuccessTodosFailure(r),
+      (r) => value = SuccessTodosState(r),
     );
   }
 
-  ///Update
   void updateTodo(TodoItem item) {
-    final idx = (value as SuccessTodosFailure).todosItens.indexOf(item);
-    value = (value as SuccessTodosFailure)..todosItens[idx] = item;
+    final todos = _currentTodos;
+    if (todos == null) return;
 
+    final idx = todos.indexOf(item);
+    if (idx == -1) return;
+
+    todos[idx] = item;
     notifyListeners();
 
-    //update on cache
-    _updateTodo(item);
+    _repository.updateTodo(item);
   }
 
   void createTodo(TodoItem item) {
-    value = (value as SuccessTodosFailure)
-      ..todosItens.add(TodoItemModel.fromItem(item));
+    final todos = _currentTodos;
+    if (todos == null) return;
+
+    todos.add(TodoItemModel.fromItem(item));
     notifyListeners();
 
-    _createTodo(item);
+    _repository.createTodo(item);
   }
 
   void deleteTodo(TodoItem item) {
-    value = (value as SuccessTodosFailure)..todosItens.remove(item); //where?
+    final todos = _currentTodos;
+    if (todos == null) return;
+
+    todos.remove(item);
     notifyListeners();
 
-    _deleteTodo(item.id).then((_) => _updateTodosOrders());
+    _repository.deleteTodo(item.id).then((_) => _updateTodosOrders());
   }
 
   void reorder(int oldIndex, int newIndex) {
-    //in widget reorder up to down the newIndex is comming +1
-    final newIdx = (oldIndex > newIndex) ? newIndex : newIndex - 1;
+    final todos = _currentTodos;
+    if (todos == null) return;
 
-    (value as SuccessTodosFailure).todosItens.insert(
-          newIdx,
-          (value as SuccessTodosFailure).todosItens.removeAt(oldIndex),
-        );
+    final newIdx = (oldIndex > newIndex) ? newIndex : newIndex - 1;
+    todos.insert(newIdx, todos.removeAt(oldIndex));
 
     _updateTodosOrders();
   }
 
   void _updateTodosOrders() {
-    final originTodos = (value as SuccessTodosFailure).todosItens;
+    final todos = _currentTodos;
+    if (todos == null) return;
 
-    for (var i = 0; i < originTodos.length; i++) {
-      originTodos[i].order = i;
+    for (var i = 0; i < todos.length; i++) {
+      todos[i] = todos[i].copyWith(order: i);
     }
 
     notifyListeners();
 
-    //update cache
-    _updateTodoList(originTodos);
+    _repository.updateTodoListOrder(todos);
   }
 }

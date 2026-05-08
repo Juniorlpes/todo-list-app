@@ -1,5 +1,5 @@
-import 'package:todo_list/core/general_app_failure.dart';
+import 'package:todo_list/core/app_failure.dart';
 
-class UserNotAuthenticated extends GeneralAppFailure {
-  UserNotAuthenticated([String? message]) : super(message: message);
+class UserNotAuthenticated extends AppFailure {
+  const UserNotAuthenticated([String? message]) : super(message: message);
 }

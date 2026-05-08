@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:todo_list/app/auth/data/models/user_model.dart';
 import 'package:todo_list/core/firebase/firestore_collection_service.dart';
-import 'package:todo_list/core/general_app_failure.dart';
+import 'package:todo_list/core/app_failure.dart';
 import 'package:todo_list/shared/utils/constants.dart';
 
 class UsersCollection implements DataCollectionService<UserModel> {
@@ -37,7 +37,7 @@ class UsersCollection implements DataCollectionService<UserModel> {
 
   @override
   Future<List<UserModel>> getAll() {
-    throw GeneralAppFailure(message: 'Unsupported to this collection');
+    throw const UnexpectedFailure(message: 'Unsupported to this collection');
   }
 
   @override

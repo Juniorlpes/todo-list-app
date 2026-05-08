@@ -82,7 +82,6 @@ class TodoDialog extends StatelessWidget {
   }
 
   void updateTodo() {
-    item!.todo = textController.text;
-    todosStore.updateTodo(item!);
+    todosStore.updateTodo(item!.copyWith(todo: textController.text));
   }
 }

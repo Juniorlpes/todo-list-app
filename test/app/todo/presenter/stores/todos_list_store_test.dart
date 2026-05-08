@@ -3,11 +3,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:todo_list/app/todo/data/models/todo_model.dart';
 import 'package:todo_list/app/todo/domain/entities/todo_item.dart';
 import 'package:todo_list/app/todo/domain/repositories/todo_repository.dart';
-import 'package:todo_list/app/todo/domain/usecases/create_todo.dart';
-import 'package:todo_list/app/todo/domain/usecases/delete_todo.dart';
-import 'package:todo_list/app/todo/domain/usecases/get_todo_list.dart';
-import 'package:todo_list/app/todo/domain/usecases/update_todo.dart';
-import 'package:todo_list/app/todo/domain/usecases/update_todo_list.dart';
 import 'package:todo_list/app/todo/presenter/stores/todos_list_store.dart';
 import 'package:todo_list/core/utils/either.dart';
 
@@ -19,13 +14,7 @@ void main() {
   when(() => mockRepository.getAllTodosList())
       .thenAnswer((_) async => right([]));
 
-  final todoStore = TodosListStore(
-    CreateTodo(mockRepository),
-    UpdateTodo(mockRepository),
-    DeleteTodo(mockRepository),
-    GetTodosList(mockRepository),
-    UpdateTodoList(mockRepository),
-  );
+  final todoStore = TodosListStore(mockRepository);
 
   final genericTodo = TodoItem(todo: 'todo', order: 0);
 
@@ -41,12 +30,12 @@ void main() {
 
     await todoStore.getAllTodoItens();
 
-    expect(todoStore.value is SuccessTodosFailure, true);
-    expect((todoStore.value as SuccessTodosFailure).todosItens.length, 2);
+    expect(todoStore.value is SuccessTodosState, true);
+    expect((todoStore.value as SuccessTodosState).todosItens.length, 2);
   });
 
   test('create', () async {
-    todoStore.value = SuccessTodosFailure(
+    todoStore.value = SuccessTodosState(
         [TodoItemModel.fromItem(TodoItem(todo: 'todo', order: 1))]);
 
     when(() => mockRepository.createTodo(genericTodo))
@@ -54,11 +43,11 @@ void main() {
 
     todoStore.createTodo(genericTodo);
 
-    expect((todoStore.value as SuccessTodosFailure).todosItens.length, 2);
+    expect((todoStore.value as SuccessTodosState).todosItens.length, 2);
   });
 
   test('delete', () async {
-    todoStore.value = SuccessTodosFailure([genericTodo]);
+    todoStore.value = SuccessTodosState([genericTodo]);
 
     when(() => mockRepository.deleteTodo(any()))
         .thenAnswer((_) async => right(null));
@@ -67,31 +56,29 @@ void main() {
 
     todoStore.deleteTodo(genericTodo);
 
-    expect((todoStore.value as SuccessTodosFailure).todosItens.length, 0);
+    expect((todoStore.value as SuccessTodosState).todosItens.length, 0);
   });
 
   test('update', () async {
     final todo2 = TodoItem(todo: 'todo', order: 3);
 
-    todoStore.value = SuccessTodosFailure([genericTodo, todo2]);
+    todoStore.value = SuccessTodosState([genericTodo, todo2]);
 
     when(() => mockRepository.updateTodo(any()))
         .thenAnswer((_) async => right(genericTodo));
 
     expect(genericTodo.done, false);
-    expect(
-        (todoStore.value as SuccessTodosFailure).todosItens.first.done, false);
+    expect((todoStore.value as SuccessTodosState).todosItens.first.done, false);
 
-    genericTodo.done = true;
+    final updatedTodo = genericTodo.copyWith(done: true);
 
-    todoStore.updateTodo(genericTodo);
+    todoStore.updateTodo(updatedTodo);
 
-    expect(
-        (todoStore.value as SuccessTodosFailure).todosItens.first.done, true);
+    expect((todoStore.value as SuccessTodosState).todosItens.first.done, true);
   });
 
   test('reorder', () async {
-    todoStore.value = SuccessTodosFailure(
+    todoStore.value = SuccessTodosState(
         [genericTodo, TodoItem(id: '2', todo: 'todo2', order: 1)]);
 
     when(() => mockRepository.updateTodoListOrder(any()))
@@ -99,7 +86,7 @@ void main() {
 
     todoStore.reorder(1, 0);
 
-    expect((todoStore.value as SuccessTodosFailure).todosItens.length, 2);
-    expect((todoStore.value as SuccessTodosFailure).todosItens.first.id, '2');
+    expect((todoStore.value as SuccessTodosState).todosItens.length, 2);
+    expect((todoStore.value as SuccessTodosState).todosItens.first.id, '2');
   });
 }
