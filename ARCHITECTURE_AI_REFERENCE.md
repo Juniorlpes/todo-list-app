@@ -213,10 +213,54 @@ class UnexpectedFailure extends AppFailure {
 - Datasources depend on the abstraction.
 - If the package changes, only the core implementation changes.
 
-Examples:
-- **REST**: `RestService` (abstract) → `RestServiceImpl` (uses Dio internally)
-- **Firebase**: `DataCollectionService<T>` (abstract) → `TodoSubCollection` (uses Firestore)
-- **Cache**: `CacheController<T>` (uses Hive internally)
+Available infrastructure abstractions:
+
+#### REST (`core/rest_service/`)
+- `RestService` — abstract class defining HTTP operations (get, post, put, delete)
+- `RestServiceImpl` — implementation using Dio
+- `RestResponse<T>` — wraps response data + status code + optional error message
+- `RestStatusCode` — enum mapping all HTTP status codes
+- `NetworkFailure extends AppFailure` — typed failure for REST errors with status code
+- `dio_interceptors/` — AuthInterceptor (token injection), PrintLogInterceptor (logging)
+
+Usage in datasource:
+```dart
+class TodoRestDatasourceImpl implements TodoDatasource {
+  final RestService _rest;
+  TodoRestDatasourceImpl(this._rest);
+
+  @override
+  Future<List<TodoItemModel>> getAllTodos() async {
+    final response = await _rest.getList('/todos', (json) => TodoItemModel.fromJson(json));
+    if (!response.success) throw NetworkFailure(statusCode: response.statusCode, message: response.errorMessage);
+    return response.data;
+  }
+}
+```
+
+#### Firebase (`core/firebase/`)
+- `DataCollectionService<T>` — abstract class with typed Firestore collection CRUD
+- Implementations: `UsersCollection`, `TodoSubCollection`
+- Uses `withConverter` for typed reads/writes
+
+#### Cache (`core/cache/`)
+- `CacheController<T>` — generic Hive box wrapper with encryption support
+- `CacheBox` — enum for box naming
+- `CacheAdaptersId` — central registry for Hive TypeAdapter IDs (avoids conflicts)
+- Requires TypeAdapter generation for custom objects (via `hive_generator` or manual)
+
+Usage in datasource:
+```dart
+class TodoLocalDatasourceImpl implements TodoLocalDatasource {
+  final CacheController<TodoItemModel> _cache;
+  TodoLocalDatasourceImpl(this._cache);
+
+  @override
+  Future<List<TodoItemModel>> getAllTodos() async {
+    return (await _cache.values)?.toList() ?? [];
+  }
+}
+```
 
 ### Rule 13: View (Page/Widget) Rules
 - Views are StatelessWidget when possible.

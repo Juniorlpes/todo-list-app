@@ -190,8 +190,70 @@ class _TodoMainComponentState extends State<TodoMainComponent> {
 
 Each data source type has an abstract service in `core/` to isolate external packages:
 
-- **Firebase**: `DataCollectionService<T>` — generic Firestore collection wrapper.
-- **REST**: `RestService` — abstracts HTTP client (Dio). All datasources depend on this, so swapping the HTTP package only changes one class.
-- **Cache**: `CacheController<T>` — wraps Hive for offline storage.
+### Firebase — `DataCollectionService<T>`
+Generic Firestore collection wrapper. Provides CRUD operations typed to your model.
+- Location: `core/firebase/firestore_collection_service.dart`
+- Implementations: `UsersCollection`, `TodoSubCollection`
+- Wraps: `cloud_firestore`
+
+```dart
+abstract class DataCollectionService<T> {
+  late final CollectionReference<T> collection;
+  Future<String> create(T value);
+  Future<void> update(T value);
+  Future<void> delete(String id);
+  Future<List<T>> getAll();
+  Future<T?> getById(String id);
+}
+```
+
+### REST — `RestService`
+Abstracts HTTP client operations. All REST datasources depend on this.
+- Location: `core/rest_service/rest_service.dart`
+- Implementation: `RestServiceImpl` (uses Dio)
+- Includes: `RestResponse<T>`, `RestStatusCode`, interceptors (auth, logging)
+- Also defines `NetworkFailure extends AppFailure` for typed REST errors
+
+```dart
+abstract class RestService {
+  Future<RestResponse<T>> getModel<T>(String path, T Function(dynamic) parse, {...});
+  Future<RestResponse<List<T>>> getList<T>(String path, T Function(dynamic) parse, {...});
+  Future<RestResponse<T>> postModel<T>(String path, dynamic body, T Function(dynamic) parse);
+  Future<RestResponse<T>> putModel<T>(String path, dynamic body, T Function(dynamic) parse);
+  Future<RestResponse<T>> deleteModel<T>(String path);
+  // ...and list variants
+}
+```
+
+### Cache — `CacheController<T>`
+Generic offline storage using Hive. Supports encryption, typed adapters.
+- Location: `core/cache/cache_controller.dart`
+- Support files: `CacheBox` (enum), `CacheAdaptersId` (type IDs registry)
+- Wraps: `hive`
+
+```dart
+class CacheController<ValueType> {
+  CacheController({required CacheBox cacheBoxEnum, bool needBeEncrypted = false});
+  Future<ValueType?> getByKey(dynamic key);
+  Future<bool> writeByKey(dynamic key, ValueType value);
+  Future<bool> deleteByKey(dynamic key);
+  Future<Iterable<ValueType>?> get values;
+  Future<bool> clear();
+  // ...and many more
+}
+```
+
+### Swapping Infrastructure
+To change from Firebase to REST for the todo module, only the injector changes:
+```dart
+// Firebase:
+TodoDatasourceImpl(TodoSubCollection(userId))
+
+// REST (swap only the datasource):
+TodoRestDatasourceImpl(RestServiceImpl.todoApi())
+
+// Cache (swap only the datasource):
+TodoLocalDatasourceImpl(CacheController<TodoItemModel>(cacheBoxEnum: CacheBox.todoItem))
+```
 
 This ensures that **no datasource depends directly on an external package** — only on the core abstraction.
